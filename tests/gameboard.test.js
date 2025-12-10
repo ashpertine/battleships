@@ -27,7 +27,11 @@ describe('test gameboard', () => {
     gameboard.placeShip(ship, [1, 3], 'v');
     expect(gameboard.board).toStrictEqual({
       ships: [
-        { ship_1: { start: [1, 3], end: [1, 5] } }
+        {
+          name: 'ship_1',
+          shipObj: ship,
+          coords: { start: [1, 3], end: [1, 5] }
+        }
       ]
     })
   })
@@ -97,6 +101,16 @@ describe('test gameboard', () => {
     expect(Object.values(gameboard.grid[7][6])[0]).toBe('h');
   })
 
+  test('receiveAttack increases ship hit count', () => {
+    let ship = new Ship(3)
+    let ship2 = new Ship(3)
+    let gameboard = new Gameboard();
+    gameboard.placeShip(ship, [2, 4], 'v');
+    gameboard.placeShip(ship2, [6, 7], 'h');
+    gameboard.receiveAttack([6, 7]);
+    expect(ship2.hits).toBe(1);
+  })
+
   test('receiveAttack misses marks with m', () => {
     let ship = new Ship(3)
     let ship2 = new Ship(3)
@@ -105,5 +119,30 @@ describe('test gameboard', () => {
     gameboard.placeShip(ship2, [6, 7], 'h');
     gameboard.receiveAttack([0, 2]);
     expect(gameboard.grid[2][0]).toBe('m');
+  })
+
+  test('hasAllSunk correctly checks of all ships have sunk', () => {
+    let ship = new Ship(2);
+    let ship2 = new Ship(2);
+    let gameboard = new Gameboard();
+    gameboard.placeShip(ship, [2, 4], 'v');
+    gameboard.placeShip(ship2, [6, 7], 'h');
+    gameboard.receiveAttack([2, 4]);
+    gameboard.receiveAttack([2, 5]);
+    gameboard.receiveAttack([6, 7]);
+    gameboard.receiveAttack([7, 7]);
+    expect(gameboard.hasAllSunk()).toBe(true);
+  })
+
+  test('hasAllSunk correctly checks of all ships have sunk (not all have sunk)', () => {
+    let ship = new Ship(2);
+    let ship2 = new Ship(2);
+    let gameboard = new Gameboard();
+    gameboard.placeShip(ship, [2, 4], 'v');
+    gameboard.placeShip(ship2, [6, 7], 'h');
+    gameboard.receiveAttack([2, 4]);
+    gameboard.receiveAttack([2, 5]);
+    gameboard.receiveAttack([6, 7]);
+    expect(gameboard.hasAllSunk()).toBe(false);
   })
 })

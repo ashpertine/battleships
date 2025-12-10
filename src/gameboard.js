@@ -86,8 +86,11 @@ class Gameboard {
 
     this.validateCoordinates(shipCoord);
     const shipIndex = this.#boardObj.ships.length + 1;
+    const shipName = `ship_${shipIndex}`;
     this.#boardObj.ships.push({
-      [`ship_${shipIndex}`]: shipCoord
+      name: shipName,
+      shipObj: ship_obj,
+      coords: shipCoord
     });
     this.placeOnGrid(shipIndex, shipCoord, orientation)
     return endCoord;
@@ -95,13 +98,28 @@ class Gameboard {
 
   receiveAttack(attack_coords) {
     if (Object.values(this.#grid[attack_coords[1]][attack_coords[0]])[0] == "*") { //the coordinate index are reversed because
-      let shipId = Object.keys(this.#grid[attack_coords[1]][attack_coords[0]])[0]; //the grid slicing starts with row then column
-      this.#grid[attack_coords[1]][attack_coords[0]][`${shipId}`] = 'h'; // h for hit
-      return (`${shipId} has been hit!`);
+      let shipName = Object.keys(this.#grid[attack_coords[1]][attack_coords[0]])[0]; //the grid slicing starts with row then column
+      this.#grid[attack_coords[1]][attack_coords[0]][`${shipName}`] = 'h'; // h for hit
+      for (ship of this.#boardObj.ships) {
+        if (ship.name == shipName) {
+          ship.shipObj.hit();
+        }
+      }
+      return (`${shipName} has been hit!`);
     }
 
     this.#grid[attack_coords[1]][attack_coords[0]] = 'm'; //m for 'missed'
     return "missed!";
+  }
+
+  hasAllSunk() {
+    for (let i = 0; i < this.#boardObj.ships.length; i++) {
+      if (!this.#boardObj.ships[i].shipObj.isSunk()) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
 }
