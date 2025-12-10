@@ -42,14 +42,16 @@ class Gameboard {
   }
 
   isOverlapping(shipCoord) {
-    for (let row_index = 0; row_index < this.#grid.length; row_index++) {
-      for (let index = 0; index < this.#grid[row_index].length; index++) {
-        if ((index == shipCoord.start[0] || index == shipCoord.end[0]) &&
-          Object.values(this.#grid[row_index][index])[0] == "*") {
-          return true;
-        }
+    if (shipCoord.start[0] == shipCoord.end[0]) {  //vertical 
+      for (let y = shipCoord.start[1]; y <= shipCoord.end[1]; y++) {
+        if (this.#grid[y][shipCoord.start[0]] !== 'e') return true;
+      }
+    } else { //horizontal
+      for (let x = shipCoord.start[0]; x <= shipCoord.end[0]; x++) {
+        if (this.#grid[shipCoord.start[1]][x] !== 'e') return true;
       }
     }
+
     return false;
   }
 

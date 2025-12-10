@@ -62,6 +62,26 @@ describe('test gameboard', () => {
     }).toThrow('ships overlap');
   })
 
+  test('throw error when ships overlap part 2', () => {
+    expect(() => {
+      let ship = new Ship(3)
+      let ship1 = new Ship(4)
+      let gameboard = new Gameboard();
+      gameboard.placeShip(ship, [6, 5], 'v');
+      gameboard.placeShip(ship1, [3, 6], 'h');
+    }).toThrow('ships overlap');
+  })
+
+  test("interior vertical/horizontal overlap is missed by isOverlapping", () => {
+    const board = new Gameboard();
+    const shipA = new Ship(3);
+    const shipB = new Ship(3);
+    board.placeShip(shipA, [5, 4], 'v');
+    expect(() => {
+      board.placeShip(shipB, [4, 5], 'h');
+    }).toThrow('ships overlap'); // <-- this expectation will FAIL with current isOverlapping
+  });
+
   test('placing ships on grid works', () => {
     let ship = new Ship(3)
     let gameboard = new Gameboard();
