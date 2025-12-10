@@ -45,7 +45,7 @@ class Gameboard {
     for (let row_index = 0; row_index < this.#grid.length; row_index++) {
       for (let index = 0; index < this.#grid[row_index].length; index++) {
         if ((index == shipCoord.start[0] || index == shipCoord.end[0]) &&
-          this.#grid[row_index][index] == "*") {
+          Object.values(this.#grid[row_index][index])[0] == "*") {
           return true;
         }
       }
@@ -53,16 +53,16 @@ class Gameboard {
     return false;
   }
 
-  placeOnGrid(ship_coord, orientation) {
+  placeOnGrid(ship_index, ship_coord, orientation) {
     //if orientation is vertical, range from start y axis to end y axis
     //if orientation is horizontal, range from start x axis to end x axis
     if (orientation == "v") {
       for (let i = ship_coord.start[1]; i <= ship_coord.end[1]; i++) {
-        this.#grid[i][ship_coord.start[0]] = "*";
+        this.#grid[i][ship_coord.start[0]] = { [`ship_${ship_index}`]: "*" };
       }
     } else if (orientation == "h") {
       for (let i = ship_coord.start[0]; i <= ship_coord.end[0]; i++) {
-        this.#grid[ship_coord.start[1]][i] = "*";
+        this.#grid[ship_coord.start[1]][i] = { [`ship_${ship_index}`]: "*" };
       }
     }
   }
@@ -85,10 +85,25 @@ class Gameboard {
     }
 
     this.validateCoordinates(shipCoord);
-    this.#boardObj.ships.push([ship_obj, shipCoord]);
-    this.placeOnGrid(shipCoord, orientation)
+    const shipIndex = this.#boardObj.ships.length + 1;
+    this.#boardObj.ships.push({
+      [`ship_${shipIndex}`]: shipCoord
+    });
+    this.placeOnGrid(shipIndex, shipCoord, orientation)
     return endCoord;
   }
+
+  receiveAttack(attack_coords) {
+    if (Object.values(this.#grid[attack_coords[1]][attack_coords[0]])[0] == "*") { //the coordinate index are reversed because
+      let shipId = Object.keys(this.#grid[attack_coords[1]][attack_coords[0]])[0]; //the grid slicing starts with row then column
+      this.#grid[attack_coords[1]][attack_coords[0]][`${shipId}`] = 'h'; // h for hit
+      return (`${shipId} has been hit!`);
+    }
+
+    this.#grid[attack_coords[1]][attack_coords[0]] = 'm'; //m for 'missed'
+    return "missed!";
+  }
+
 }
 
 export { Gameboard };

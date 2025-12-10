@@ -27,7 +27,7 @@ describe('test gameboard', () => {
     gameboard.placeShip(ship, [1, 3], 'v');
     expect(gameboard.board).toStrictEqual({
       ships: [
-        [ship, { start: [1, 3], end: [1, 5] }]
+        { ship_1: { start: [1, 3], end: [1, 5] } }
       ]
     })
   })
@@ -66,13 +66,44 @@ describe('test gameboard', () => {
     expect(gameboard.grid).toStrictEqual([['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
     ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
     ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
-    ['e', '*', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
-    ['e', '*', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
-    ['e', '*', 'e', '*', '*', '*', 'e', 'e', 'e', 'e'],
+    ['e', { ship_1: '*' }, 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
+    ['e', { ship_1: '*' }, 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
+    ['e', { ship_1: '*' }, 'e', { ship_2: '*' }, { ship_2: '*' }, { ship_2: '*' }, 'e', 'e', 'e', 'e'],
     ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
     ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
     ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
     ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
     ])
+  })
+
+
+  test('receiveAttack hits corrects ship', () => {
+    let ship = new Ship(3)
+    let ship2 = new Ship(3)
+    let gameboard = new Gameboard();
+    gameboard.placeShip(ship, [1, 3], 'v');
+    gameboard.placeShip(ship2, [3, 5], 'h');
+
+    expect(gameboard.receiveAttack([3, 5])).toBe('ship_2 has been hit!');
+  })
+
+  test('receiveAttack hit marks with h', () => {
+    let ship = new Ship(3)
+    let ship2 = new Ship(3)
+    let gameboard = new Gameboard();
+    gameboard.placeShip(ship, [2, 4], 'v');
+    gameboard.placeShip(ship2, [6, 7], 'h');
+    gameboard.receiveAttack([6, 7]);
+    expect(Object.values(gameboard.grid[7][6])[0]).toBe('h');
+  })
+
+  test('receiveAttack misses marks with m', () => {
+    let ship = new Ship(3)
+    let ship2 = new Ship(3)
+    let gameboard = new Gameboard();
+    gameboard.placeShip(ship, [2, 4], 'v');
+    gameboard.placeShip(ship2, [6, 7], 'h');
+    gameboard.receiveAttack([0, 2]);
+    expect(gameboard.grid[2][0]).toBe('m');
   })
 })
