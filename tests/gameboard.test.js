@@ -121,6 +121,15 @@ describe('test gameboard', () => {
     expect(gameboard.grid[2][0]).toBe('m');
   })
 
+  test('throw error when invalid coordinate is input in receiveAttack', () => {
+    expect(() => {
+      let ship = new Ship(3)
+      let gameboard = new Gameboard();
+      gameboard.placeShip(ship, [4, 4], 'h');
+      gameboard.receiveAttack([10, 0]);
+    }).toThrow('attack is out of bounds');
+  })
+
   test('hasAllSunk correctly checks of all ships have sunk', () => {
     let ship = new Ship(2);
     let ship2 = new Ship(2);

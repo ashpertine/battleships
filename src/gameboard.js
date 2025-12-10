@@ -97,6 +97,7 @@ class Gameboard {
   }
 
   receiveAttack(attack_coords) {
+    if (!this.validateOutOfBounds(attack_coords)) throw new Error("attack is out of bounds");
     if (Object.values(this.#grid[attack_coords[1]][attack_coords[0]])[0] == "*") { //the coordinate index are reversed because
       let shipName = Object.keys(this.#grid[attack_coords[1]][attack_coords[0]])[0]; //the grid slicing starts with row then column
       this.#grid[attack_coords[1]][attack_coords[0]][`${shipName}`] = 'h'; // h for hit
