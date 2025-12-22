@@ -1,4 +1,4 @@
-import { Player } from "../src/player.js";
+import { Player } from "../src/js/player.js";
 
 
 describe('test player class', () => {

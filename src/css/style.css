@@ -1,0 +1,44 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ship-list {
+  color: green;
+}
+
+.ship-list .positioned {
+  color: red;
+}
+.grid {
+  height: 600px;
+  width: 600px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+}
+
+.grid-cell {
+  border: 2px solid black;
+  aspect-ratio: 1 / 1;
+}
+
+.grid-cell.hovered {
+  background-color: grey;
+}
+
+.grid-cell.filled {
+  background-color: cornflowerblue;
+}
+
+.grid-cell.hovered-error {
+  background-color: lightcoral;
+}

@@ -1,5 +1,5 @@
-import { Gameboard } from '../src/gameboard.js'
-import { Ship } from '../src/ship.js'
+import { Gameboard } from '../src/js/gameboard.js'
+import { Ship } from '../src/js/ship.js'
 
 describe('test gameboard', () => {
   test('gameboard class exists', () => {
