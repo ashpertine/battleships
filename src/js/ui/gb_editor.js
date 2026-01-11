@@ -1,4 +1,11 @@
+// needed for creating the internal gameboard
+import { Gameboard } from "../gameboard.js";
+import { Ship } from "../ship.js";
+
+import "../../css/style.css";
+
 class Grid {
+  #internalGameboard;
   constructor() {
     this.SHIPS = [
       { id: 1, ship: "Ship 1 (4)", length: 4, placed: false, color: "#e74c3c" }, //red
@@ -12,16 +19,36 @@ class Grid {
       { id: 9, ship: "Ship 9 (1)", length: 1, placed: false, color: "#7f8c8d" }, //grey
       { id: 10, ship: "Ship 10 (1)", length: 1, placed: false, color: "#ff66cc" }, //pink
     ];
+
+
+    this.placedShipInfo = []; // contains starting_coordinates, and orientation
     this.currentBlockLength = this.SHIPS[0].length;
     this.currentShipIndex = 0;
-    this.defaultOrientation = 'h';
+    this.currentOrientation = 'h';
+
+    this.#internalGameboard = new Gameboard();
+
+    // DOM
     this.mainContainer = document.querySelector("#main-container");
     this.grid = document.createElement('div');
-    this.rotateButton = document.createElement('button');
 
-    // Rotate Button
+    // Buttons
+    this.buttons = document.createElement('div');
+    this.buttons.classList.add("buttons-container");
+
+    this.rotateButton = document.createElement('button');
     this.rotateButton.innerText = "Rotate";
     this.rotateButton.classList.add("rotate");
+
+    this.startButton = document.createElement('button');
+    this.startButton.innerText = "Start Game!";
+    this.startButton.classList.add("start-game");
+
+    this.buttons.append(this.rotateButton, this.startButton);
+  }
+
+  get gameboard() {
+    return this.#internalGameboard;
   }
 
   #isAllPlaced() {
@@ -45,7 +72,7 @@ class Grid {
       }
     }
 
-    this.mainContainer.appendChild(this.rotateButton);
+    this.mainContainer.appendChild(this.buttons);
     this.mainContainer.appendChild(this.grid);
   }
 
@@ -145,11 +172,29 @@ class Grid {
     }
   }
 
-  #blockPreview(orientation) {
+  #addButtonEventListeners() {
     this.rotateButton.addEventListener('click', () => {
-      orientation = this.#rotateBlock(orientation);
+      this.currentOrientation = this.#rotateBlock(this.currentOrientation);
     });
 
+    this.startButton.addEventListener('click', () => {
+      const allGridCells = this.grid.children;
+      for (let cell of allGridCells) {
+        if (cell.getAttribute("data-start") === "true" && cell.getAttribute("data-orientation") && cell.getAttribute("data-length")) {
+          let startingCoords = [Number(cell.getAttribute("data-column-index")), Number(cell.getAttribute("data-row-index"))];
+          let orientation = cell.getAttribute("data-orientation");
+          let length = Number(cell.getAttribute("data-length"));
+
+          // create a new ship
+          const newShip = new Ship(length);
+          this.#internalGameboard.placeShip(newShip, startingCoords, orientation);
+        }
+      }
+      console.log(this.gameboard);
+    });
+  }
+
+  #blockPreview() {
     this.grid.addEventListener('mouseleave', () => {
       for (let i = 0; i < this.grid.children.length; i++) {
         if (this.grid.children[i].classList.contains("hovered") || this.grid.children[i].classList.contains("hovered-error")) {
@@ -160,7 +205,7 @@ class Grid {
     })
 
     this.grid.addEventListener("mouseover", (event) => {
-      if (!event.target.getAttribute("data-row-index")) return false;
+      if (!event.target.classList.contains("grid-cell")) return false;
       this.#resetHovered();
       let difference = this.currentBlockLength - 1;
       let target_coords = {
@@ -171,7 +216,7 @@ class Grid {
       let setHover = [target_coords];
       for (let i = 1; i <= difference; i++) {
         let newCell = {};
-        if (orientation == "h") {
+        if (this.currentOrientation == "h") {
           const next_column =
             Number(event.target.getAttribute("data-column-index")) + i;
           if (
@@ -211,12 +256,22 @@ class Grid {
     const shipList = document.querySelector('.ship-list');
     const grid = document.querySelector('.grid');
     grid.addEventListener('click', (event) => {
+      if (!event.target.classList.contains('grid-cell')) return false;
       const ship = this.SHIPS[this.currentShipIndex];
       if (!event.target.classList.contains('hovered-error')) {
+
+        //edit target ship button
         const targetShip = shipList.querySelector(`[data-shipindex="${this.currentShipIndex}"]`)
         targetShip.classList.remove('btn-selected');
         targetShip.classList.add('placed');
         this.SHIPS[this.currentShipIndex].placed = true;
+
+        //tag the starting coordinate of ship
+        event.target.dataset.start = true
+        event.target.dataset.orientation = this.currentOrientation;
+        event.target.dataset.length = this.currentBlockLength;
+
+        //place blocks
         const hoveredBlocks = document.querySelectorAll('.hovered');
         for (let cell of hoveredBlocks) {
           cell.classList.remove('hovered');
@@ -253,7 +308,8 @@ class Grid {
   }
 
   mouseEvents() {
-    this.#blockPreview(this.defaultOrientation);
+    this.#blockPreview(this.currentOrientation);
+    this.#addButtonEventListeners();
     this.#addBlockPlacement();
   }
 
