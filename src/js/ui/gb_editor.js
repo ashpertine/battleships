@@ -2,9 +2,13 @@
 import { Gameboard } from "../gameboard.js";
 import { Ship } from "../ship.js";
 
+// needed for second phase
+import { Game } from "./gameplay.js"
+import { changeCssState } from './helpers.js'
+
 import "../../css/style.css";
 
-class Grid {
+class GridEditor {
   #internalGameboard;
   constructor() {
     this.SHIPS = [
@@ -29,6 +33,7 @@ class Grid {
     this.#internalGameboard = new Gameboard();
 
     // DOM
+    document.body.classList.add("editor-style");
     this.mainContainer = document.querySelector("#main-container");
     this.grid = document.createElement('div');
 
@@ -49,6 +54,16 @@ class Grid {
 
   get gameboard() {
     return this.#internalGameboard;
+  }
+
+  startGame() { //this assumes internalGameboard is set. See addButtonEventListeners
+    while (this.mainContainer.firstChild) {
+      this.mainContainer.removeChild(this.mainContainer.firstChild);
+    }
+
+    changeCssState('gameplay-style');
+    let game = new Game(this.gameboard);
+    game.start()
   }
 
   #isAllPlaced() {
@@ -190,7 +205,7 @@ class Grid {
           this.#internalGameboard.placeShip(newShip, startingCoords, orientation);
         }
       }
-      console.log(this.gameboard);
+      this.startGame()
     });
   }
 
@@ -321,9 +336,8 @@ class Grid {
 }
 
 
-
-const newGrid = new Grid;
-newGrid.startEvent();
+const newGridEditor = new GridEditor;
+newGridEditor.startEvent();
 
 
 

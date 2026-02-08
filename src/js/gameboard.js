@@ -103,7 +103,7 @@ class Gameboard {
     if (Object.values(this.#grid[attack_coords[1]][attack_coords[0]])[0] == "*") { //the coordinate index are reversed because
       let shipName = Object.keys(this.#grid[attack_coords[1]][attack_coords[0]])[0]; //the grid slicing starts with row then column
       this.#grid[attack_coords[1]][attack_coords[0]][`${shipName}`] = 'h'; // h for hit
-      for (ship of this.#boardObj.ships) {
+      for (const ship of this.#boardObj.ships) {
         if (ship.name == shipName) {
           ship.shipObj.hit();
         }
