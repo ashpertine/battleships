@@ -3,7 +3,7 @@ const path = require("path");
 
 module.exports = {
   mode: "development",
-  entry: "./src/js/ui/gb_editor.js",
+  entry: "./src/js/ui/index.js",
   output: {
     filename: "main.js",
     path: path.resolve(__dirname, "dist"),

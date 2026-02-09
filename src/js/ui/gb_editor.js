@@ -4,7 +4,6 @@ import { Ship } from "../ship.js";
 
 // needed for second phase
 import { Game } from "./gameplay.js"
-import { changeCssState } from './helpers.js'
 
 import "../../css/style.css";
 
@@ -31,6 +30,7 @@ class GridEditor {
     this.currentOrientation = 'h';
 
     this.#internalGameboard = new Gameboard();
+    this.onComplete = null // will be assigned callback
 
     // DOM
     document.body.classList.add("editor-style");
@@ -54,16 +54,6 @@ class GridEditor {
 
   get gameboard() {
     return this.#internalGameboard;
-  }
-
-  startGame() { //this assumes internalGameboard is set. See addButtonEventListeners
-    while (this.mainContainer.firstChild) {
-      this.mainContainer.removeChild(this.mainContainer.firstChild);
-    }
-
-    changeCssState('gameplay-style');
-    let game = new Game(this.gameboard);
-    game.start()
   }
 
   #isAllPlaced() {
@@ -205,7 +195,9 @@ class GridEditor {
           this.#internalGameboard.placeShip(newShip, startingCoords, orientation);
         }
       }
-      this.startGame()
+      if(this.onComplete) {
+        this.onComplete(this.gameboard);
+      }
     });
   }
 
@@ -335,9 +327,7 @@ class GridEditor {
   }
 }
 
-
-const newGridEditor = new GridEditor;
-newGridEditor.startEvent();
+export { GridEditor }
 
 
 

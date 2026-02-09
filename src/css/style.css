@@ -24,6 +24,12 @@ body.editor-style {
   color: var(--text-main);
 }
 
+body.gameplay-style {
+  min-height: 100vh;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
 .editor-style #main-container {
   display: flex;
   flex-direction: column;

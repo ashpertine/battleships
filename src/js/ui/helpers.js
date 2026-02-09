@@ -1,8 +1,7 @@
-function changeCssState(state) {
-  let currentState = document.body.className
-  document.body.classList.remove(currentState)
-
-  document.body.classList.add(state)
+function changeCssStyle(style) {
+  let currentStyle = document.body.className
+  document.body.classList.remove(currentStyle)
+  document.body.classList.add(style)
 }
 
-export { changeCssState }
+export { changeCssStyle }
