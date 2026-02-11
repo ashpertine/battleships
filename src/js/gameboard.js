@@ -91,6 +91,7 @@ class Gameboard {
     const shipName = `ship_${shipIndex}`;
     this.#boardObj.ships.push({
       name: shipName,
+      id: shipIndex,
       shipObj: ship_obj,
       coords: shipCoord
     });

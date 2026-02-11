@@ -29,6 +29,7 @@ describe('test gameboard', () => {
       ships: [
         {
           name: 'ship_1',
+          id: 1,
           shipObj: ship,
           coords: { start: [1, 3], end: [1, 5] }
         }

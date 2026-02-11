@@ -1,5 +1,6 @@
 import { GridEditor } from "./gb_editor.js";
 import { Game } from "./gameplay.js";
+import { Computer } from "../computer.js"
 import { changeCssStyle } from "./helpers.js"
 
 
@@ -20,7 +21,7 @@ class GameController {
   }
 
   startGameplay(player_gameboard) {
-    const newGame = new Game(player_gameboard); 
+    const newGame = new Game(player_gameboard);
     newGame.start()
   }
 

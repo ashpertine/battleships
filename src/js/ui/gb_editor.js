@@ -1,28 +1,17 @@
 // needed for creating the internal gameboard
 import { Gameboard } from "../gameboard.js";
 import { Ship } from "../ship.js";
+import { SHIP_LIST } from "../helpers.js";
+import Battleship from "../../images/battleship.png";
+import BattleshipRotated from "../../images/battleship_rotated.png"
 
-// needed for second phase
-import { Game } from "./gameplay.js"
 
 import "../../css/style.css";
 
 class GridEditor {
   #internalGameboard;
   constructor() {
-    this.SHIPS = [
-      { id: 1, ship: "Ship 1 (4)", length: 4, placed: false, color: "#e74c3c" }, //red
-      { id: 2, ship: "Ship 2 (3)", length: 3, placed: false, color: "#e67e22" }, //orange
-      { id: 3, ship: "Ship 3 (3)", length: 3, placed: false, color: "#f1c40f" }, //yellow
-      { id: 4, ship: "Ship 4 (2)", length: 2, placed: false, color: "#2ecc71" }, //green
-      { id: 5, ship: "Ship 5 (2)", length: 2, placed: false, color: "#1abc9c" }, //teal
-      { id: 6, ship: "Ship 6 (2)", length: 2, placed: false, color: "#3498db" }, //blue
-      { id: 7, ship: "Ship 7 (1)", length: 1, placed: false, color: "#9b59b6" }, //purple
-      { id: 8, ship: "Ship 8 (1)", length: 1, placed: false, color: "#34495e" }, //dark blue
-      { id: 9, ship: "Ship 9 (1)", length: 1, placed: false, color: "#7f8c8d" }, //grey
-      { id: 10, ship: "Ship 10 (1)", length: 1, placed: false, color: "#ff66cc" }, //pink
-    ];
-
+    this.SHIPS = [...SHIP_LIST];
 
     this.placedShipInfo = []; // contains starting_coordinates, and orientation
     this.currentBlockLength = this.SHIPS[0].length;
@@ -49,7 +38,7 @@ class GridEditor {
     this.startButton.innerText = "Start Game!";
     this.startButton.classList.add("start-game");
 
-    this.buttons.append(this.rotateButton, this.startButton);
+    this.buttons.append(this.rotateButton);
   }
 
   get gameboard() {
@@ -65,7 +54,7 @@ class GridEditor {
     return allPlaced;
   }
 
-  initialiseGrid() {
+  #initialiseGrid() {
     this.grid.classList.add('grid');
     for (let row = 0; row < 10; row++) {
       for (let column = 0; column < 10; column++) {
@@ -81,7 +70,7 @@ class GridEditor {
     this.mainContainer.appendChild(this.grid);
   }
 
-  initialiseAvailableShipBlocks() {
+  #initialiseAvailableShipBlocks() {
     const shipList = document.createElement('div');
     shipList.classList.add('ship-list');
 
@@ -195,7 +184,7 @@ class GridEditor {
           this.#internalGameboard.placeShip(newShip, startingCoords, orientation);
         }
       }
-      if(this.onComplete) {
+      if (this.onComplete) {
         this.onComplete(this.gameboard);
       }
     });
@@ -254,9 +243,45 @@ class GridEditor {
       }
 
       let allPlaced = this.#isAllPlaced();
-
       if (!allPlaced) this.#highlightCell(setHover, this.currentBlockLength);
     });
+  }
+
+  #addShipImage(start_x, start_y) {
+    const cellWidth = 36;
+    const gap = 4;
+    const padding = 8;
+    const battleshipIcon = new Image();
+
+    // dont ask how i got these calculations
+    if (this.currentOrientation == 'h') {
+      battleshipIcon.src = Battleship;
+      battleshipIcon.classList.add("battleship-icon");
+      let width = (cellWidth * this.currentBlockLength) + (gap * (this.currentBlockLength - 1));
+      let height = cellWidth;
+      let topGap = padding + (start_y * (cellWidth + gap)) + 4;
+      let leftGap = padding + (start_x * (cellWidth + gap)) + 4;
+
+      battleshipIcon.style.maxWidth = `${width}px`;
+      battleshipIcon.style.maxHeight = `${height}px`;
+      battleshipIcon.style.top = `${topGap}px`;
+      battleshipIcon.style.left = `${leftGap}px`;
+    }
+    else {
+      battleshipIcon.src = BattleshipRotated;
+      battleshipIcon.classList.add("battleship-icon");
+      let width = cellWidth;
+      let height = (cellWidth * this.currentBlockLength) + (gap * (this.currentBlockLength - 1));
+      let topGap = padding + (start_y * (cellWidth + gap)) + 2;
+      let leftGap = padding + (start_x * (cellWidth + gap)) + 2;
+
+      battleshipIcon.style.maxWidth = `${width}px`;
+      battleshipIcon.style.maxHeight = `${height}px`;
+      battleshipIcon.style.top = `${topGap}px`;
+      battleshipIcon.style.left = `${leftGap}px`;
+    }
+
+    this.grid.append(battleshipIcon);
   }
 
   #addBlockPlacement() {
@@ -266,6 +291,9 @@ class GridEditor {
       if (!event.target.classList.contains('grid-cell')) return false;
       const ship = this.SHIPS[this.currentShipIndex];
       if (!event.target.classList.contains('hovered-error')) {
+        //get target ship info
+        let startX = event.target.getAttribute('data-column-index');
+        let startY = event.target.getAttribute('data-row-index');
 
         //edit target ship button
         const targetShip = shipList.querySelector(`[data-shipindex="${this.currentShipIndex}"]`)
@@ -285,12 +313,16 @@ class GridEditor {
           cell.classList.add('filled');
 
           cell.dataset.shipid = ship.id;
-          cell.style.backgroundColor = ship.color;
+          cell.classList.add(ship.color);
         }
 
+        this.#addShipImage(startX, startY);
+
+        if (this.#isAllPlaced()) {
+          this.buttons.append(this.startButton);
+        }
         this.#goToNextBlock();
       }
-
     });
   }
 
@@ -314,16 +346,13 @@ class GridEditor {
     selectedButton.classList.add('btn-selected');
   }
 
-  mouseEvents() {
-    this.#blockPreview(this.currentOrientation);
-    this.#addButtonEventListeners();
-    this.#addBlockPlacement();
-  }
 
   startEvent() {
-    this.initialiseAvailableShipBlocks();
-    this.initialiseGrid();
-    this.mouseEvents();
+    this.#initialiseAvailableShipBlocks();
+    this.#initialiseGrid();
+    this.#blockPreview();
+    this.#addButtonEventListeners();
+    this.#addBlockPlacement();
   }
 }
 

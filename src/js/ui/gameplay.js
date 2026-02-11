@@ -1,14 +1,18 @@
+import { Computer } from "../computer.js";
+
 class Game {
-  #internalGameboard
-  constructor(gameboard) {
-    this.#internalGameboard = gameboard;
+  #playerGameboard;
+  #computerGameboard;
+  constructor(player_gameboard) {
+    this.#playerGameboard = player_gameboard;
+    const com = new Computer;
+    com.populateGameboard();
+    this.#computerGameboard = com.gameboard;
   }
 
-  get gameboard() {
-    return this.#internalGameboard;
-  }
   start() {
-    console.log(this.gameboard);
+    console.log(this.#computerGameboard);
+    console.log(this.#playerGameboard);
   }
 }
 
