@@ -24,6 +24,8 @@ class GridEditor {
     // DOM
     document.body.classList.add("editor-style");
     this.mainContainer = document.querySelector("#main-container");
+    this.buttonGridContainer = document.createElement("div");
+    this.buttonGridContainer.classList.add('button-grid-container');
     this.grid = document.createElement('div');
 
     // Buttons
@@ -66,8 +68,9 @@ class GridEditor {
       }
     }
 
-    this.mainContainer.appendChild(this.buttons);
-    this.mainContainer.appendChild(this.grid);
+    this.buttonGridContainer.appendChild(this.buttons);
+    this.buttonGridContainer.appendChild(this.grid);
+    this.mainContainer.append(this.buttonGridContainer);
   }
 
   #initialiseAvailableShipBlocks() {
@@ -166,7 +169,7 @@ class GridEditor {
     }
   }
 
-  #addButtonEventListeners() {
+  #addInputEventListeners() {
     this.rotateButton.addEventListener('click', () => {
       this.currentOrientation = this.#rotateBlock(this.currentOrientation);
     });
@@ -290,7 +293,7 @@ class GridEditor {
     grid.addEventListener('click', (event) => {
       if (!event.target.classList.contains('grid-cell')) return false;
       const ship = this.SHIPS[this.currentShipIndex];
-      if (!event.target.classList.contains('hovered-error')) {
+      if (!event.target.classList.contains('hovered-error') && !this.#isAllPlaced()) {
         //get target ship info
         let startX = event.target.getAttribute('data-column-index');
         let startY = event.target.getAttribute('data-row-index');
@@ -351,7 +354,7 @@ class GridEditor {
     this.#initialiseAvailableShipBlocks();
     this.#initialiseGrid();
     this.#blockPreview();
-    this.#addButtonEventListeners();
+    this.#addInputEventListeners();
     this.#addBlockPlacement();
   }
 }
