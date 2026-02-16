@@ -2,9 +2,9 @@ class Gameboard {
   #grid;
   #boardObj;
   constructor() {
-    this.#grid = [...Array(10)].map(e => Array(10).fill('e'));
+    this.#grid = [...Array(10)].map((e) => Array(10).fill("e"));
     this.#boardObj = {
-      ships: []
+      ships: [],
     };
   }
 
@@ -17,38 +17,43 @@ class Gameboard {
   }
 
   #validateOutOfBounds(coordinates) {
-    if ((coordinates[0] < 0 || coordinates[1] < 0) ||
-      (!this.#grid[coordinates[0]]) ||
-      (!this.#grid[coordinates[0]][coordinates[1]])) {
+    if (
+      coordinates[0] < 0 ||
+      coordinates[1] < 0 ||
+      !this.#grid[coordinates[0]] ||
+      !this.#grid[coordinates[0]][coordinates[1]]
+    ) {
       return false;
     }
 
-    return true
+    return true;
   }
 
   #findEndCoord(ship_length, starting_coord, orientation) {
-    const noOfSpaces = ship_length - 1; // ship already occupies the first grid space on the board   
+    const noOfSpaces = ship_length - 1; // ship already occupies the first grid space on the board
 
-    let endCoord = []
-    if (orientation == 'v') {
+    let endCoord = [];
+    if (orientation == "v") {
       let endPoint = starting_coord[1] + noOfSpaces;
       endCoord = [starting_coord[0], endPoint];
-    } else if (orientation == 'h') {
+    } else if (orientation == "h") {
       let endPoint = starting_coord[0] + noOfSpaces;
       endCoord = [endPoint, starting_coord[1]];
     }
 
-    return endCoord
+    return endCoord;
   }
 
   #isOverlapping(shipCoord) {
-    if (shipCoord.start[0] == shipCoord.end[0]) {  //vertical 
+    if (shipCoord.start[0] == shipCoord.end[0]) {
+      //vertical
       for (let y = shipCoord.start[1]; y <= shipCoord.end[1]; y++) {
-        if (this.#grid[y][shipCoord.start[0]] !== 'e') return true;
+        if (this.#grid[y][shipCoord.start[0]] !== "e") return true;
       }
-    } else { //horizontal
+    } else {
+      //horizontal
       for (let x = shipCoord.start[0]; x <= shipCoord.end[0]; x++) {
-        if (this.#grid[shipCoord.start[1]][x] !== 'e') return true;
+        if (this.#grid[shipCoord.start[1]][x] !== "e") return true;
       }
     }
 
@@ -76,15 +81,19 @@ class Gameboard {
     }
 
     let isOverlap = this.#isOverlapping(shipCoord);
-    if (isOverlap) throw new Error('ships overlap');
+    if (isOverlap) throw new Error("ships overlap");
   }
 
   placeShip(ship_obj, starting_coord, orientation) {
-    const endCoord = this.#findEndCoord(ship_obj.length, starting_coord, orientation);
+    const endCoord = this.#findEndCoord(
+      ship_obj.length,
+      starting_coord,
+      orientation,
+    );
     const shipCoord = {
       start: starting_coord,
-      end: endCoord
-    }
+      end: endCoord,
+    };
 
     this.#validateCoordinates(shipCoord);
     const shipIndex = this.#boardObj.ships.length + 1;
@@ -93,26 +102,32 @@ class Gameboard {
       name: shipName,
       id: shipIndex,
       shipObj: ship_obj,
-      coords: shipCoord
+      coords: shipCoord,
     });
-    this.#placeOnGrid(shipIndex, shipCoord, orientation)
+    this.#placeOnGrid(shipIndex, shipCoord, orientation);
     return endCoord;
   }
 
   receiveAttack(attack_coords) {
-    if (!this.#validateOutOfBounds(attack_coords)) throw new Error("attack is out of bounds");
-    if (Object.values(this.#grid[attack_coords[1]][attack_coords[0]])[0] == "*") { //the coordinate index are reversed because
-      let shipName = Object.keys(this.#grid[attack_coords[1]][attack_coords[0]])[0]; //the grid slicing starts with row then column
-      this.#grid[attack_coords[1]][attack_coords[0]][`${shipName}`] = 'h'; // h for hit
+    if (!this.#validateOutOfBounds(attack_coords))
+      throw new Error("attack is out of bounds");
+    if (
+      Object.values(this.#grid[attack_coords[1]][attack_coords[0]])[0] == "*"
+    ) {
+      //the coordinate index are reversed because
+      let shipName = Object.keys(
+        this.#grid[attack_coords[1]][attack_coords[0]],
+      )[0]; //the grid slicing starts with row then column
+      this.#grid[attack_coords[1]][attack_coords[0]][`${shipName}`] = "h"; // h for hit
       for (const ship of this.#boardObj.ships) {
         if (ship.name == shipName) {
           ship.shipObj.hit();
         }
       }
-      return (`${shipName} has been hit!`);
+      return `${shipName} has been hit!`;
     }
 
-    this.#grid[attack_coords[1]][attack_coords[0]] = 'm'; //m for 'missed'
+    this.#grid[attack_coords[1]][attack_coords[0]] = "m"; //m for 'missed'
     return "missed!";
   }
 
@@ -125,7 +140,6 @@ class Gameboard {
 
     return true;
   }
-
 }
 
 export { Gameboard };

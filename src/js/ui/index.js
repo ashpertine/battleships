@@ -1,12 +1,11 @@
 import { GridEditor } from "./gb_editor.js";
 import { Game } from "./gameplay.js";
-import { Computer } from "../computer.js"
-import { changeCssStyle } from "./helpers.js"
-
+import { Computer } from "../computer.js";
+import { changeCssStyle } from "./helpers.js";
 
 class GameController {
   startSetup() {
-    const newGridEditor = new GridEditor;
+    const newGridEditor = new GridEditor();
 
     newGridEditor.onComplete = (player_gameboard) => {
       this.transitionToGameplay(player_gameboard);
@@ -16,13 +15,13 @@ class GameController {
 
   transitionToGameplay(player_gameboard) {
     this.cleanup();
-    changeCssStyle('gameplay-style');
+    changeCssStyle("gameplay-style");
     this.startGameplay(player_gameboard);
   }
 
   startGameplay(player_gameboard) {
     const newGame = new Game(player_gameboard);
-    newGame.start()
+    newGame.start();
   }
 
   cleanup() {
@@ -33,6 +32,5 @@ class GameController {
   }
 }
 
-const gameController = new GameController;
-gameController.startSetup()
-
+const gameController = new GameController();
+gameController.startSetup();
