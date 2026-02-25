@@ -5,12 +5,19 @@ import { changeCssStyle } from "./helpers.js";
 
 class GameController {
   startSetup() {
+    //start a new Game without grideditor
+    changeCssStyle("gameplay-style");
+    const test_player = new Computer();
+    test_player.populateGameboard();
+    this.startGameplay(test_player.gameboard);
+    /*
     const newGridEditor = new GridEditor();
 
     newGridEditor.onComplete = (player_gameboard) => {
       this.transitionToGameplay(player_gameboard);
     };
     newGridEditor.startEvent();
+    */
   }
 
   transitionToGameplay(player_gameboard) {

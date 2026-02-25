@@ -1,6 +1,6 @@
-import { Gameboard } from './gameboard.js'
-import { Ship } from './ship.js'
-import { SHIP_LIST } from './helpers.js';
+import { Gameboard } from "./gameboard.js";
+import { Ship } from "./ship.js";
+import { SHIP_LIST } from "./helpers.js";
 
 class Computer {
   #computerGameboard;
@@ -14,12 +14,12 @@ class Computer {
   }
 
   #generateRandomCoord() {
-    return [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)]
+    return [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
   }
 
   #pickOrientation() {
-    const orientations = ['v', 'h'];
-    return (orientations[Math.round(Math.random())]);
+    const orientations = ["v", "h"];
+    return orientations[Math.round(Math.random())];
   }
 
   populateGameboard() {
@@ -41,6 +41,5 @@ class Computer {
     }
   }
 }
-
 
 export { Computer };
