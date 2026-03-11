@@ -279,6 +279,7 @@ class GridEditor {
       let width =
         cellWidth * this.currentBlockLength +
         gap * (this.currentBlockLength - 1);
+
       let height = cellWidth;
       let topGap = padding + start_y * (cellWidth + gap) + 4;
       let leftGap = padding + start_x * (cellWidth + gap) + 4;

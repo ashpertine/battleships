@@ -5,10 +5,26 @@ class Game {
   #playerGameboard;
   #computerGameboard;
   constructor(player_gameboard) {
+    this.body = document.querySelector("body");
+    // initialise gameboards
     this.#playerGameboard = player_gameboard;
     const com = new Computer();
     com.populateGameboard();
     this.#computerGameboard = com.gameboard;
+
+    //initialise more ui elements
+    this.headerSection = document.createElement("div");
+    this.headerSection.classList.add("header");
+    this.statusMessage = document.createElement("span");
+    this.statusMessage.classList.add("status-msg");
+    this.statusMessage.innerText = "hello";
+
+    this.headerSection.append(this.statusMessage);
+    this.body.prepend(this.headerSection);
+
+    // initialise logic variables
+    this.roundCounter = 0;
+    this.isPlayerTurn = Math.random() < 0.5;
 
     this.mainContainer = document.querySelector("#main-container");
   }
@@ -105,10 +121,28 @@ class Game {
     });
   }
 
+  #switchFocus() {
+    const filter = document.createElement("div");
+    filter.classList.add("stop-filter");
+
+    if (isPlayerTurn == true) {
+      const comGridFilter = this.comGrid.querySelector(".stop-filter");
+      if (comGridFilter) {
+        comGridFilter.remove();
+      }
+      this.playerGrid.append(filter);
+    } else {
+      const playerGridFilter = this.playerGrid.querySelector(".stop-filter");
+      if (playerGridFilter) {
+        playerGridFilter.remove();
+      }
+      this.comGridFilter.remove();
+    }
+  }
+
   start() {
     this.#createGrids();
     this.#populateGrid(this.playerGrid, this.#playerGameboard);
-    this.#populateGrid(this.comGrid, this.#computerGameboard);
   }
 }
 

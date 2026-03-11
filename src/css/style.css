@@ -14,6 +14,7 @@ body {
   padding: 0;
   margin: 0;
   background: linear-gradient(135deg, #1e2128 0%, #2a2d35 100%);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--text-main);
 }
 
@@ -29,10 +30,7 @@ body.gameplay-style {
   flex-direction: column; 
   justify-content: center; 
   min-height: 100vh;
-}
-
-#main-container {
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  gap: 42px;
 }
 
 .editor-style #main-container {
@@ -58,6 +56,15 @@ body.gameplay-style {
   gap: 12px;
 }
 
+.gameplay-style .header {
+  text-align: center;
+  font-weight: 800;
+}
+
+.gameplay-style .header .status-msg {
+  font-size: 36px;
+}
+
 .grid { 
   background: linear-gradient(145deg, #2a2d35, #1e2128);
   border-radius: 12px;
@@ -81,6 +88,15 @@ body.gameplay-style {
   grid-template-rows: repeat(10, 36px);
   gap: 4px;
   padding: 8px;
+}
+
+.gameplay-style .grid .stop-filter {
+  pointer-events: none;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: calc(36px * 10 + 4px * 9 + 8px * 2);
+  height: calc(36px * 10 + 4px * 9 + 8px * 2);
+  border-radius: 12px;
 }
 
 .battleship-icon {
